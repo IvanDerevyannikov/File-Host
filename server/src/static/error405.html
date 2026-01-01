@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-US"> 
+    <head>
+        <meta charset="utf-8">
+        <title>ERROR 405</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #f5f5f5;
+                font-family: Arial, sans-serif;
+            }
+            
+            .error-container {
+                text-align: center;
+                padding: 2rem;
+                max-width: 600px;
+            }
+            
+            .error-code {
+                font-size: 4rem;
+                font-weight: bold;
+                color: #ff9800; /* Оранжевый для 405 */
+                margin: 0;
+            }
+            
+            .error-title {
+                font-size: 2rem;
+                color: #333;
+                margin: 0 0 1rem 0;
+            }
+            
+            .error-description {
+                font-size: 1.2rem;
+                color: #666;
+                margin-bottom: 2rem;
+            }
+            
+            .suggestions {
+                text-align: left;
+                display: inline-block;
+                margin-top: 1rem;
+            }
+            
+            .suggestions h2 {
+                text-align: center;
+                color: #333;
+            }
+            
+            .suggestions ul {
+                color: #555;
+                line-height: 1.6;
+            }
+
+            .actions {
+                margin-top: 2rem;
+            }
+
+            .actions button {
+                padding: 10px 20px;
+                margin: 0 10px;
+                background-color: #2196f3;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="error-container">
+
+            <p class="error-code">405</p>
+            
+
+            <h1 class="error-title">Error 405 - Method Not Allowed</h1>
+            
+  
+            <p class="error-description">
+                The request method is not supported for this resource
+            </p>
+            
+
+            <section class="suggestions">
+                <h2>Possible reasons:</h2>
+                <ul>
+                    <li>Using POST method where only GET is allowed</li>
+                    <li>Attempting to use PUT or DELETE on read-only resource</li>
+                    <li>Incorrect HTTP method for the API endpoint</li>
+                    <li>Missing or incorrect CORS configuration</li>
+                    <li>Web application firewall blocking the method</li>
+                </ul>
+            </section>
+
+
+            <section class="suggestions">
+                <h2>What you can do:</h2>
+                <ul>
+                    <li>Check if you're using the correct HTTP method (GET, POST, etc.)</li>
+                    <li>Review the API documentation for supported methods</li>
+                    <li>Try using a different HTTP method</li>
+                    <li>Contact the website administrator if this persists</li>
+                </ul>
+            </section>
+
+            <div class="actions">
+                <button onclick="history.back()">Go Back</button>
+                <button onclick="window.location.href='/'">Home Page</button>
+                <button onclick="location.reload()">Try Again</button>
+            </div>
+        </div>
+    </body>
+</html>

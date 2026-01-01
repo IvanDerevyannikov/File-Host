@@ -1,0 +1,51 @@
+.headerMaster{
+    display: flex;
+    background-color: #89918c;
+    /* align-items: center;
+    justify-content: space-between; */
+}
+
+.headerImage{
+    background-image: url('/image/jpeg/wood5.jpeg');
+    background-repeat: no-repeat;
+    height: 700px;
+    width: 1000px;
+}
+
+.headerInfo{
+    display: flex;
+    justify-content: space-between;
+    height: 100px;
+    flex-grow:1;
+    min-width: 300px;
+}
+
+.logoContainer{
+    display: flex;
+}
+
+.logoImage{
+    width: 120px;
+    height: 120px;
+}
+
+.headerRightPanel{
+    margin: 10px 40px;
+}
+
+.citeName{
+    font-size: 1.2em;
+    align-content: center;
+}
+
+.settingIcon .aboutIcon{
+    cursor:pointer;
+}
+
+.headerFunctions{
+    align-content: center;
+}
+
+.headerDiscription{
+    margin-top: 200px;
+}

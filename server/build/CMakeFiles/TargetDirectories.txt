@@ -1,0 +1,3 @@
+/home/ivan/Programs/boost_asio_client_server_example/server/build/CMakeFiles/asynchronous_http_server1.dir
+/home/ivan/Programs/boost_asio_client_server_example/server/build/CMakeFiles/edit_cache.dir
+/home/ivan/Programs/boost_asio_client_server_example/server/build/CMakeFiles/rebuild_cache.dir
