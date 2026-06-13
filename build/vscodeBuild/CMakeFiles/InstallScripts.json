@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/ider/Desktop/Programs/File-Host/build/vscodeBuild/cmake_install.cmake",
+		"/Users/ider/Desktop/Programs/File-Host/build/vscodeBuild/server/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

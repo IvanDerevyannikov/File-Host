@@ -1,5 +1,16 @@
 {
     "header":{
-        
+        "site-name": "File Host",
+        "description": "Hello To File Server This Page Provide You To Save Your File On Remote Server"
+    },
+    "main":{
+        "describe": "Store your files properly",
+        "question": "Do you want to store data remotely and manage it via a web console?",
+        "try-server" : "Try server"
+    },
+    "settings":{
+        "description": "Settings for your server",
+        "mainSettings": "Main settings",
+        "fileSizeTittle": "Max size of File"
     }
 }

@@ -1,5 +1,5 @@
 
-window.ComponentLoader = {
+window.ComponentLoader1 = {
 
     async loadComponent(componentName, containerId){
         try {

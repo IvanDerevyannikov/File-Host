@@ -17,7 +17,6 @@
 #include <filesystem>
 
 #include <boost/asio.hpp>
-#include <boost/asio/stream_file.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread.hpp>
@@ -66,7 +65,7 @@ std::string getGmtTime(){
 
 //     // member variables
 //     HttpServer& server;
-//     boost::asio::io_service& io;
+//     boost::asio::io_context& io;
 //     boost::asio::streambuf request;
 
 //     void handleRead(boost::system::error_code ec, size_t n) {
@@ -193,7 +192,7 @@ std::string getGmtTime(){
 //     void getImage1(){
 //         boost::asio::streambuf response;
 //         std::ostream res_stream(&response);
-//         //boost::asio::stream_file file_stream(this->server.io_service);
+//         //boost::asio::stream_file file_stream(this->server.io_context);
 //         //file_stream.open("../image.jpeg");
 //         //file_stream.open("../image.jpeg", std::ios::binary);
 //         std::ifstream image_file("../image.jpeg", std::ios::in | std::ios::binary);
@@ -253,7 +252,7 @@ class HttpServer
 {
     public:
     
-    HttpServer(boost::asio::io_service& io, unsigned int port) : io_service(io), acceptor(io_service, tcp::endpoint(tcp::v4(), port)) {}
+    HttpServer(boost::asio::io_context& io, unsigned int port) : io_context(io), acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {}
     ~HttpServer() { if (sThread) sThread->join(); }
     
     // void Run()
@@ -261,7 +260,7 @@ class HttpServer
     //     sThread.reset(new boost::thread(boost::bind(&HttpServer::thread_main, this)));
     // }
 
-    boost::asio::io_service& io_service;
+    boost::asio::io_context& io_context;
 
     private:
     tcp::acceptor acceptor;
@@ -269,9 +268,9 @@ class HttpServer
 
     // void thread_main()
     // {
-    //     // adds some work to the io_service
+    //     // adds some work to the io_context
     //     start_accept();
-    //     io_service.run();
+    //     io_context.run();
     // }
 
     // void start_accept()
@@ -291,9 +290,9 @@ class HttpServer
     // }
 };
 
-// Request::Request(HttpServer& server): server(server), io(server.io_service)
+// Request::Request(HttpServer& server): server(server), io(server.io_context)
 // {
-//     socket.reset(new tcp::socket(server.io_service));
+//     socket.reset(new tcp::socket(server.io_context));
 // }
 
 struct Point {
@@ -307,7 +306,7 @@ struct Point {
 int main (int argc, char *argv[])
 {
    std::cout << "Boost version: " << BOOST_LIB_VERSION << std::endl;
-   boost::asio::io_service io;
+   boost::asio::io_context io;
    //boost::asio::stream_file file(io);
    //HttpServer server(io, 8080);
    //server.Run();
@@ -337,7 +336,7 @@ int main (int argc, char *argv[])
     auto async_handler = boost::make_shared<AsyncRouteHandler>(
         "/go/go",
         http_parser::HttpMethod::Method::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response, boost::asio::io_service& io,std::function<void()> completion) {
+        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response, boost::asio::io_context& io,std::function<void()> completion) {
         // std::string request_line;
         // std::getline(request_stream, request_line);
 
@@ -476,6 +475,28 @@ int main (int argc, char *argv[])
         }
     );
 
+    auto localesHandler = boost::make_shared<SyncRouteHandler>(
+        "/locales/{fileName}",
+        http_parser::HttpMethod::GET,
+        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
+            auto& config = ConfigProvider::getConfig();
+            std::string localesPath = config.getValue<std::string>({"directory","locales"});
+            auto splitPath = http_parser::splitPath(request.startLine.url.getPath());
+            auto localeFile = std::ifstream(localesPath + "/" + splitPath.back() + ".json");
+            
+            std::ostringstream localesStream;
+            localesStream << localeFile.rdbuf();
+            auto localesStr = localesStream.str();
+
+            response.setStartLine({"HTTP/1.1", http_parser::response::StatusCode::ok});
+
+            response.setHeader({"Content-Type", "text/json; charset=utf-8"});
+            response.setHeader({"Content-Lenght", std::to_string(localesStr.length())});
+
+            response.setbody(localesStr);
+        }
+    );
+
 
     mult.AddRoute("/",http_parser::HttpMethod::GET,handler);
     mult.AddRoute("/go/go", http_parser::HttpMethod::GET, async_handler);
@@ -485,6 +506,8 @@ int main (int argc, char *argv[])
     mult.AddRoute("/image/svg/{fileName}", http_parser::HttpMethod::GET, imageSvgHandler);
     mult.AddRoute("/image/jpeg/{fileName}", http_parser::HttpMethod::GET, imageJpegHandler);
     mult.AddRoute("/css/{fileName}", http_parser::HttpMethod::GET, cssHandler);
+    mult.AddRoute("/locales/{filename}", http_parser::HttpMethod::GET, localesHandler);
+    
 
     auto& config = ConfigProvider::getConfig();
     server::HttpServer server(io,mult,config.getValue<int>({"server", "port"}));

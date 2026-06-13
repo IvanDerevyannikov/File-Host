@@ -1,5 +1,3 @@
-#define BOOST_ASIO_HAS_IO_URING 1 // on linux
-
 #include <sstream>
 #include <istream>
 
@@ -11,19 +9,12 @@
 
 #include <boost/pointer_cast.hpp>
 #include <boost/asio.hpp>
-#include <boost/asio/stream_file.hpp>
-
 #include "../http_parser/http_response.h"
 #include "../http_parser/http_request.h"
 #include "../http_parser/http_request_parser.h"
 
 #include "../config/config_provider.h"
-
-
 #include "request.h"
-
-
-
 
 namespace server{
 
@@ -69,23 +60,6 @@ namespace server{
     }
 
     void Request::afterRead( const boost::system::error_code& error, std::size_t bytesSended){
-        if(error)
-            return;
-        std::istream req(&request_);
-        std::string fileName = "../static/index.html";
-        auto fileStream = std::make_shared<boost::asio::stream_file>(io_, fileName, boost::asio::stream_file::read_only);
-        auto buffer = std::make_shared<std::vector<char>>(10000);
-        boost::asio::async_read(*fileStream, boost::asio::buffer(*buffer), [this,fileStream,buffer](const boost::system::error_code& code, std::size_t bytes_send){
-            std::cout << "bytes send: " << bytes_send << '\n';
-            this->afterRead(code, bytes_send);
-        });
-        
-         std::string requestData((std::istreambuf_iterator<char>(req)),
-                    std::istreambuf_iterator<char>());
-        auto parsedRequest = http_parser::parseHttpRequest(requestData);
-        std::string method, path;
-        method = parsedRequest.startLine.method.toString();
-        //path = parsedRequest.startLine.url;
 
     }
 

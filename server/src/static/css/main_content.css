@@ -1,0 +1,27 @@
+.main{
+   font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.main-title{
+    text-align: center;
+}
+
+.main-describe{
+    margin-top: 50px;
+    font-size: 25px;
+}
+
+.main-question{
+    margin: 5px 120px 0px 120px;
+    font-size: 50px;
+}
+
+.start-button{
+    display: block;
+    margin: 40px auto;
+    width: 150px;
+    height: 50px;
+}

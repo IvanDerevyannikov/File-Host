@@ -1,18 +1,16 @@
-.headerMaster{
+.header-master{
     display: flex;
     background-color: #89918c;
-    /* align-items: center;
-    justify-content: space-between; */
 }
 
-.headerImage{
+.header-image{
     background-image: url('/image/jpeg/wood5.jpeg');
     background-repeat: no-repeat;
     height: 700px;
     width: 1000px;
 }
 
-.headerInfo{
+.header-info{
     display: flex;
     justify-content: space-between;
     height: 100px;
@@ -20,32 +18,33 @@
     min-width: 300px;
 }
 
-.logoContainer{
+.logo-container{
     display: flex;
 }
 
-.logoImage{
+.logo-image{
     width: 120px;
     height: 120px;
 }
 
-.headerRightPanel{
+.header-right-panel{
     margin: 10px 40px;
 }
 
-.citeName{
+.site-name{
     font-size: 1.2em;
     align-content: center;
 }
 
-.settingIcon .aboutIcon{
-    cursor:pointer;
+.settings-icon .About-icon{
+    cursor: pointer;
 }
 
-.headerFunctions{
+.header-functions{
     align-content: center;
 }
 
-.headerDiscription{
+.header-description{
+    text-align: center;
     margin-top: 200px;
 }

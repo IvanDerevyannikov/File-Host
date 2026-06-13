@@ -14,7 +14,7 @@ namespace server{
     class HttpServer{
         friend class Request;
         public:
-        HttpServer(boost::asio::io_service& io,Multiplexer& mult , size_t port);
+        HttpServer(boost::asio::io_context& io,Multiplexer& mult , size_t port);
         ~HttpServer();
 
         void run();
@@ -24,7 +24,7 @@ namespace server{
         void handleAccept(boost::shared_ptr<server::Request> request, const boost::system::error_code& error);
 
         boost::asio::ip::tcp::acceptor acceptor_;
-        boost::asio::io_service& io_;
+        boost::asio::io_context& io_;
         Multiplexer& mult_;
         boost::shared_ptr<ErrorHandlerManager> errorHandlManagerPtr_;
     };

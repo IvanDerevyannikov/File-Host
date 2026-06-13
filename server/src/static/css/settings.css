@@ -1,0 +1,29 @@
+.settings-overlay{
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-main{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-head{
+    padding: 5px 50px;
+    background-color: rgb(204, 238, 109);
+    color:black;
+}
+
+.settings-section{
+    padding: 0px 50px;
+    border: solid rgb(243, 196, 231)
+}

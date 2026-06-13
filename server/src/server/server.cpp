@@ -4,7 +4,7 @@
 
 namespace server{
 
-    HttpServer::HttpServer(boost::asio::io_service& io, Multiplexer& mult,size_t port): io_(io), mult_(mult),
+    HttpServer::HttpServer(boost::asio::io_context& io, Multiplexer& mult,size_t port): io_(io), mult_(mult),
         acceptor_(io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),port))) {
             auto errorHandlFactotyPtr= boost::shared_ptr<ErrorHandlerFactory>(new ErrorHandlerFactory());
             errorHandlFactotyPtr->initialize();
