@@ -80,39 +80,39 @@
     },
     "C_Cpp.errorSquiggles": "disabled",
     
-    // ДОБАВЛЕННЫЕ НАСТРОЙКИ CMAKE:
-    `   `
-    // Путь к CMake (узнайте через 'which cmake' в терминале)
-    "cmake.cmakePath": "/opt/homebrew/bin/cmake",
-    // Для M1/M2 Mac скорее всего: "/opt/homebrew/bin/cmake"
+    // // ДОБАВЛЕННЫЕ НАСТРОЙКИ CMAKE:
+    // `   `
+    // // Путь к CMake (узнайте через 'which cmake' в терминале)
+    // "cmake.cmakePath": "/opt/homebrew/bin/cmake",
+    // // Для M1/M2 Mac скорее всего: "/opt/homebrew/bin/cmake"
     
-    // Директория сборки (уже есть, но можно уточнить)
-    "cmake.buildDirectory": "${workspaceFolder}/build/vscodeBuild",
+    // // Директория сборки (уже есть, но можно уточнить)
+    // "cmake.buildDirectory": "${workspaceFolder}/build/vscodeBuild",
     
-    // Корневая директория проекта с CMakeLists.txt
-    "cmake.sourceDirectory": "${workspaceFolder}",
+    // // Корневая директория проекта с CMakeLists.txt
+    // "cmake.sourceDirectory": "${workspaceFolder}",
     
-    // Параметры конфигурации
-    "cmake.configureSettings": {
-        // Указываем компиляторы явно
-        "CMAKE_C_COMPILER": "/usr/bin/clang",
-        "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
-        // Версия C++ стандарта
-        "CMAKE_CXX_STANDARD": "17",
-        "CMAKE_CXX_STANDARD_REQUIRED": "ON"
-    },
+    // // Параметры конфигурации
+    // "cmake.configureSettings": {
+    //     // Указываем компиляторы явно
+    //     "CMAKE_C_COMPILER": "/usr/bin/clang",
+    //     "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+    //     // Версия C++ стандарта
+    //     "CMAKE_CXX_STANDARD": "17",
+    //     "CMAKE_CXX_STANDARD_REQUIRED": "ON"
+    // },
     
-    // Дополнительные аргументы конфигурации
-    "cmake.configureArgs": [
-        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
-    ],
+    // // Дополнительные аргументы конфигурации
+    // "cmake.configureArgs": [
+    //     "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    // ],
     
-    // Автоматически конфигурировать при открытии
-    "cmake.configureOnOpen": true,
+    // // Автоматически конфигурировать при открытии
+    // "cmake.configureOnOpen": true,
     
-    // Генератор (для macOS обычно Unix Makefiles или Ninja)
-    "cmake.generator": "Unix Makefiles",
+    // // Генератор (для macOS обычно Unix Makefiles или Ninja)
+    // "cmake.generator": "Unix Makefiles",
     
-    // Тип сборки по умолчанию
-    "cmake.buildType": "Debug"
+    // // Тип сборки по умолчанию
+    // "cmake.buildType": "Debug"
 }

@@ -1,5 +1,0 @@
-/Users/ider/Desktop/Programs/File-Host/build/vscodeBuild/CMakeFiles/edit_cache.dir
-/Users/ider/Desktop/Programs/File-Host/build/vscodeBuild/CMakeFiles/rebuild_cache.dir
-/Users/ider/Desktop/Programs/File-Host/build/vscodeBuild/server/CMakeFiles/asynchronous_http_server1.dir
-/Users/ider/Desktop/Programs/File-Host/build/vscodeBuild/server/CMakeFiles/edit_cache.dir
-/Users/ider/Desktop/Programs/File-Host/build/vscodeBuild/server/CMakeFiles/rebuild_cache.dir
