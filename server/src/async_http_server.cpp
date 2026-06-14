@@ -15,6 +15,7 @@
 #include <string>
 #include <thread>
 #include <filesystem>
+#include <algorithm>
 
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
@@ -22,6 +23,8 @@
 #include <boost/thread.hpp>
 #include <boost/bind/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/range/iterator_range.hpp>
 
 #include <yaml-cpp/yaml.h>
 
@@ -371,7 +374,7 @@ int main (int argc, char *argv[])
     );
 
     auto jsHandler = boost::make_shared<SyncRouteHandler>(
-        "/js/{fileName}",
+        "/js/**/{fileName}",
         http_parser::HttpMethod::GET,
         [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
             auto splitPaths = http_parser::splitPath(request.startLine.url.getPath());
@@ -379,7 +382,11 @@ int main (int argc, char *argv[])
             auto& config = ConfigProvider::getConfig();
             auto staticPath = config.getValue<std::string>({"directory", "static"});
 
-            auto file = std::ifstream(staticPath + "/js/" + splitPaths.back());
+            auto jsIterator = std::find(splitPaths.begin(), splitPaths.end(), "js");
+            auto rangeAfterJs = boost::make_iterator_range(jsIterator, splitPaths.end());
+            auto pathStr = boost::algorithm::join(rangeAfterJs, "/");
+
+            auto file = std::ifstream(staticPath + "/" + pathStr);
             std::ostringstream oss;
             oss << file.rdbuf();
             std::string js_data = oss.str();
@@ -501,7 +508,7 @@ int main (int argc, char *argv[])
     mult.AddRoute("/",http_parser::HttpMethod::GET,handler);
     mult.AddRoute("/go/go", http_parser::HttpMethod::GET, async_handler);
     mult.AddRoute("/{fileName}", http_parser::HttpMethod::GET, staticHandler);
-    mult.AddRoute("/js/{fileName}", http_parser::HttpMethod::GET, jsHandler);
+    mult.AddRoute("/js/**/{fileName}", http_parser::HttpMethod::GET, jsHandler);
     mult.AddRoute("/components/{fileName}", http_parser::HttpMethod::GET, htmlTemplateHandler);
     mult.AddRoute("/image/svg/{fileName}", http_parser::HttpMethod::GET, imageSvgHandler);
     mult.AddRoute("/image/jpeg/{fileName}", http_parser::HttpMethod::GET, imageJpegHandler);

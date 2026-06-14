@@ -1,7 +1,7 @@
 import LocalesProvider from './i18n.js';
 import LocaleManager from './locale-manager.js';
 import DomTranslator from './dom-translator.js';
-import ComponentLoader from './component-loader.js';
+import ComponentLoader from './core/component-loader.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Dom is reqdy... start main function")

@@ -3,3 +3,5 @@ server/bin
 server/buld
 
 server/CmakeFiles
+
+.DS_Store
