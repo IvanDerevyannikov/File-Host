@@ -28,13 +28,15 @@ export default class ComponentLoader {
         })
     }
 
-    async loadComponent(componentName, containerId,cssRef){
-        await this.loadCSS(cssRef);
+    async loadComponent(componentName, containerId, cssRef = null){
+        if(cssRef){
+            await this.loadCSS(cssRef);
+        }
         const htmlText = await this.loadHTML(componentName);
         const container = document.getElementById(containerId);
         container.innerHTML = htmlText;
 
-        domTranslator.applyLocales(containerId);
+        this.domTranslator.applyLocales(containerId);
         this.loadComponents.add(containerId);
     }
 
@@ -46,5 +48,9 @@ export default class ComponentLoader {
         this.loadComponents.delete(containerId);
         const container = document.getElementsById(containerId);
         container.innerHTML = "";
+    }
+
+    getCompText(compName){
+        return this.domTranslator.getText(compName);
     }
 } 

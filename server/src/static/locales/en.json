@@ -1,16 +1,44 @@
 {
-    "header":{
+    "header": {
         "site-name": "File Host",
         "description": "Hello To File Server This Page Provide You To Save Your File On Remote Server"
     },
-    "main":{
+    "main": {
         "describe": "Store your files properly",
         "question": "Do you want to store data remotely and manage it via a web console?",
         "try-server" : "Try server"
     },
-    "settings":{
-        "description": "Settings for your server",
+    "settings": {
+        "description": "Settings",
         "mainSettings": "Main settings",
-        "fileSizeTittle": "Max size of File"
+        "fileSizeTittle": "Max size of File",
+        "language": "Language",
+        "language-en": "EN",
+        "language-ru": "РУ",
+        "theme": "Theme",
+        "theme-light": "light",
+        "theme-dark": "dark",
+        "theme-system": "system",
+        "compactness-mode": "Compacktness mode",
+        "sound": "Sound",
+        "time-format": " Time format",
+        "time-format-24-hours": "24 hours",
+        "time-format-12-hours": "12 hours",
+        "save": "Save"
+    },
+    "footer": {
+        "total-files": "Total files:",
+        "memory-used": "Memory used:",
+        "last-change": "The last modified: ",
+        "FAQ": "FAQ",
+        "technologies": "Technologies",
+        "API": "API",
+        "rools": "Rools",
+        "project-info": "Project info",
+        "link-to-GitHub": "Link to Github sourse code"
+    },
+    "toast" : {
+        "settings-save": "Settings is sucsesfully save",
+        "settings-warning": "Cannot save user settings"
     }
 }

@@ -1,0 +1,35 @@
+.footer-main {
+    display: flex;
+    justify-content: space-between;
+    background-color: #89918c;
+    padding: 20px 200px;
+}
+
+.footer-left, .footer-center, .footer-right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 20px;
+    font-size: 18px;
+}
+
+.separate-line {
+    border-top: 1px solid;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    gap: 10px;
+    font-size: 18px;
+}
+
+.footer-main a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.footer-main a:hover {
+    text-decoration: underline;
+}

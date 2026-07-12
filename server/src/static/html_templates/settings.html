@@ -1,16 +1,67 @@
 <div class="settings-overlay" id="settings-overlay">
     <div class="settings-main">
         <div class="settings-head">
-            <span class="settings-description" data-i18n="settings.description"> File server settings for admin</span>
-            <button class="settings-close"></button> 
+            <span class="settings-description" data-i18n="settings.description"></span>
+            <button class="settings-close" id="setting-close">  &times;</button> 
         </div>
         <div class="settings-section">
-            <div class="main-settings" data-i18n="settings.mainSettings">
-                <div class="file-size">
-                    <h3 class="file-size-title" data-i18n="settings.fileSizeTitle"></h3>
-                    <input type="number" className="file-size-input"></input>
+
+            <div>
+                <span class="setting-title" data-i18n="settings.language"></span>
+                <div class="setting-content">
+                    <label>
+                        <input type="radio" name="language" value="en" checked data-i18n="settings.language-en">EN
+                    </label>
+                    <label>
+                        <input type="radio" name="language" value="ru" data-i18n="settings.language-ru">РУ
+                    </label>
                 </div>
             </div>
+
+            <div>
+                <span class="setting-title" data-i18n="settings.theme"></span>
+                <div class="setting-content">
+                    <label>
+                        <input type="radio" name="theme" value="light" checked data-i18n="settings.theme-light">light
+                    </label>
+                    <label>
+                        <input type="radio" name="theme" value="dark" data-i18n="settings.theme-dark">dark
+                    </label>
+                    <label>
+                        <input type="radio" name="theme" value="system" data-i18n="settings.theme-system">system
+                    </label>
+                </div>
+            </div>
+
+            <div class="switch">
+                <span class="setting-title" data-i18n="settings.compactness-mode"></span>
+                <div class="setting-content settings-checkbox">
+                    <input type="checkbox" name="compactness" value="1" id="compactness-switch">
+                    <label class="switch-bg" for="compactness-switch"></label>
+                </div>
+            </div>
+
+            <div class="switch">
+                <span class="setting-title" data-i18n="settings.sound"></span>
+                <div class="setting-content settings-checkbox">
+                    <input type="checkbox" name="sound" value="1" id="sound-switch">
+                    <label class="switch-bg" for="sound-switch">
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <span class="setting-title" data-i18n="settings.time-format"></span>
+                <div class="setting-content settings-checkbox">
+                    <select name="time_format">
+                        <option value="24" data-i18n="settings.time-format-24-hours"></option>
+                        <option value="12" data-i18n="settings.time-format-12-hours"></option>    
+                    </select>
+                </div>
+            <div>
+        </div>
+        <div class="settings-save-section">
+            <button class="settings-save" id="settings-save" data-i18n="settings.save"></button>
         </div>
     </div>
 </div>

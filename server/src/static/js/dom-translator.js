@@ -12,21 +12,21 @@ export default class DomTranslator{
             return;
         }
 
-        const elements = container.querySelectorAll("data-i18n");
+        const elements = container.querySelectorAll("[data-i18n]");
         elements.forEach((element)=>{
             this.applyElementLocales(element);
         })
     }
 
     applyElementLocales(element){
-        const key = element.getAttibute("data-i18n");
+        const key = element.getAttribute("data-i18n");
         const text = this.localeManager.getText(key);
         
         if(text===null){
             console.error(`cannot load ${key} text element for ${this.localeManager.lang} language`);
             return;
         }
-        applyTextForElement(element, text);
+        this.applyTextForElement(element, text);
     }
 
     applyTextForElement(element,text){
@@ -39,6 +39,10 @@ export default class DomTranslator{
         } else {
             element.innerHTML = text;
         }
+    }
+
+    getText(key){
+        return this.localeManager.getText(key);
     }
 
 }

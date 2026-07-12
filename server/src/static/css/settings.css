@@ -5,25 +5,138 @@
     right:0;
     bottom:0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 9999;
+    z-index: 10;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
 .settings-main{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background-color: white;
+    border: solid rgb(66, 134, 38) 3px;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 20px;
+    min-height: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: none;
 }
 
 .settings-head{
-    padding: 5px 50px;
-    background-color: rgb(204, 238, 109);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(172, 172, 172);
+    padding: 5px 20px;
+    margin-bottom: 30px;
     color:black;
 }
 
 .settings-section{
-    padding: 0px 50px;
-    border: solid rgb(243, 196, 231)
+    padding: 0px 20px;
+}
+
+.settings-close{
+    width: 30px;
+    height: 30px;
+}
+
+.setting-title {
+    display: block;
+    background-color: rgb(172, 172, 172);
+    font-size: 15px;
+    padding: 10px 0px 10px 10px;
+}
+
+.setting-content {
+    display: flex;
+    gap: 20px;
+    background-color: rgb(235, 235, 235);
+    padding: 10px 0px;
+}
+
+.settings-description {
+    text-align: center;
+    font-size: 15px;
+}
+
+.switch{
+    padding: 0px;
+    margin:0px; 
+}
+.switch input[type="checkbox"] {
+    display: none;
+}
+
+.switch-bg {
+    display: flex;
+    width: 55px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 34px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+/* Кружочек внутри тумблера */
+.switch-bg::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+    z-index: 2;
+}
+
+.switch input:checked ~ .switch-bg {
+    background-color: #007bff;
+}
+
+.switch input:checked ~ .switch-bg::after {
+    transform: translateX(31px);
+}
+
+.settings-checkbox {
+    padding-left: 5px;
+}
+
+.settings-save-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.settings-save {
+    width: 120px;
+    height: 30px;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+@media screen and (max-width: 800px) {
+    .settings-overlay {
+        background-color: white;
+        align-items: start;
+        padding: 30px;
+    }
+
+    .settings-main {
+        margin:0;
+        border:none;
+        max-width: 100%;
+        max-height: 100vh;
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+    }
 }
