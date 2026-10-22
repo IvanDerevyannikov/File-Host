@@ -11,6 +11,8 @@ file(GLOB_RECURSE HTTP_NET_SOURCES CONFIGURE_DEPENDS "src/server/*.cpp")
 file(GLOB_RECURSE HTTP_HANDLERS_SOURCES CONFIGURE_DEPENDS "src/handlers/*.cpp")
 file(GLOB_RECURSE HTTP_ROUTES_SOURCES CONFIGURE_DEPENDS "src/routes/*.cpp")
 file(GLOB_RECURSE HTTP_API_ROUTES_SOURCES CONFIGURE_DEPENDS "src/routes/api/*.cpp")
+file(GLOB_RECURSE HTTP_STORAGE_SOURCES CONFIGURE_DEPENDS "src/server/storage/*.cpp")
+file(GLOB_RECURSE HTTP_SERVICES_SOURCES CONFIGURE_DEPENDS "src/services/*.cpp")
 
 
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS
@@ -24,6 +26,8 @@ file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS
     "src/handlers/*.h"
     "src/routes/*.h"
     "src/routes/api/*.h"
+    "src/server/storage/*.h"
+    "src/services/*.h"
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -34,7 +38,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 
-find_package(Boost 1.85.0 REQUIRED COMPONENTS system filesystem thread coroutine regex date_time json)
+find_package(
+    Boost 1.85.0 REQUIRED COMPONENTS 
+    system 
+    filesystem 
+    thread 
+    coroutine 
+    regex 
+    date_time 
+    json
+)
 find_package(yaml-cpp REQUIRED)
 
 add_executable(
@@ -48,6 +61,8 @@ add_executable(
     ${HTTP_HANDLERS_SOURCES}
     ${HTTP_ROUTES_SOURCES}
     ${HTTP_API_ROUTES_SOURCES}
+    ${HTTP_STORAGE_SOURCES}
+    ${HTTP_SERVICES_SOURCES}
     ${HEADER_FILES}
 )
 
