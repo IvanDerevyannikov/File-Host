@@ -43,6 +43,13 @@
 .settings-close{
     width: 30px;
     height: 30px;
+    border-radius: 5px;
+}
+
+.settings-close:hover {
+    background-color: #becef1;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(66, 144 ,244, 0.3);
 }
 
 .setting-title {
@@ -119,8 +126,14 @@
 .settings-save {
     width: 120px;
     height: 30px;
-    border-radius: 10px;
+    border-radius: 5px;
     font-size: 15px;
+}
+
+.settings-save:hover {
+    background-color: #becef1;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(66, 144 ,244, 0.3);
 }
 
 @media screen and (max-width: 800px) {

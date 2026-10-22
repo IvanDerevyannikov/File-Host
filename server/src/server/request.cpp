@@ -37,11 +37,11 @@ namespace server{
             if(!errorCode){
                 try{
                     req_ = http_parser::parseHttpRequest(std::string(buffer_.data(),n));
-                    std::cout << req_.startLine.url.getPath() << '\n';
+                    // std::cout << req_.startLine.url.getPath() << '\n';
                     auto handler = mult_.GetRoute(req_.startLine.url.getPath(), req_.startLine.method.getMethod());
                     if(boost::dynamic_pointer_cast<AsyncRouteHandler>(handler)!=nullptr){
                         std::cout << "async" << '\n';
-                        handler->AssyncHandle(req_, res_, io_, [this](){
+                        handler->AssyncHandle(io_, req_, res_, [this](const boost::system::error_code& code){
                             handleWrite();
                         });
                     }

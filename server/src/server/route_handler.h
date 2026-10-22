@@ -8,8 +8,10 @@
 #include "../http_parser/http_response.h"
 
 using RouteSyncCallback = std::function<void(http_parser::HttpRequest& request, http_parser::HttpResponse& response)>;
-using RouteAsyncCallback = std::function<void(http_parser::HttpRequest& request, http_parser::HttpResponse& response, 
-                    boost::asio::io_context& io, std::function<void()>)>;
+using RouteAsyncCallback = std::function<void(boost::asio::io_context& io, 
+                                              http_parser::HttpRequest& request, 
+                                              http_parser::HttpResponse& response, 
+                                              std::function<void()>)>;
 
 class RouteHandler {
  public:
@@ -19,8 +21,10 @@ class RouteHandler {
   virtual ~RouteHandler() = default;
 
   virtual void Handle(http_parser::HttpRequest& request, http_parser::HttpResponse& response) const {}
-  virtual void AssyncHandle(http_parser::HttpRequest& request, http_parser::HttpResponse& response, 
-                            boost::asio::io_context& io,std::function<void()>) const {}
+  virtual void AssyncHandle(boost::asio::io_context& io, 
+                            http_parser::HttpRequest& request, 
+                            http_parser::HttpResponse& response, 
+                            std::function<void(const boost::system::error_code& ec)>) const {}
 
   std::string GetPath() {return path_;}
   http_parser::HttpMethod::Method GetMethod() {return method_;}
@@ -46,8 +50,10 @@ class AsyncRouteHandler: public RouteHandler{
 
   AsyncRouteHandler(std::string path, http_parser::HttpMethod::Method method, RouteAsyncCallback callback);
 
-  void AssyncHandle(http_parser::HttpRequest& request, http_parser::HttpResponse& response, 
-                    boost::asio::io_context& io, std::function<void()>) const override;
+  void AssyncHandle(boost::asio::io_context& io, 
+                    http_parser::HttpRequest& request, 
+                    http_parser::HttpResponse& response, 
+                    std::function<void(const boost::system::error_code& ec)>) const override;
 
   private:
   RouteAsyncCallback callback_;

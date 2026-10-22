@@ -1,45 +1,24 @@
-/**
- *  danilod100 at gmail.com
- *  Compile with: g++ async_http_server.cpp -o async_http_server -lboost_system -lboost_thread -lpthread
- *
- * */
-//#define BOOST_ASIO_HAS_FILE 1
-// #define BOOST_ASIO_HAS_IO_URING 1 // on linux
 #include <iostream>
-#include <fstream>
 #include <sstream>
-#include <ostream>
-#include <vector>
-#include <istream>
 #include <ctime>
 #include <string>
-#include <thread>
-#include <filesystem>
-#include <algorithm>
 
 #include <boost/asio.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include <boost/thread.hpp>
-#include <boost/bind/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/range/iterator_range.hpp>
 
 #include <yaml-cpp/yaml.h>
 
-#include "./http_parser/http_response.h"
-#include "./http_parser/http_request.h"
-#include "./http_parser/http_request_parser.h"
 #include "./server/multiplexer.h"
 #include "./server/route_handler.h"
 #include "./server/server.h"
 #include "./config/config.h"
 #include "./config/config_provider.h"
+#include "./routes/static_routes.h"
 
 using boost::asio::ip::tcp;
 
-class HttpServer; // forward declaration
+class HttpServer;
 
 
 
@@ -251,274 +230,64 @@ std::string getGmtTime(){
 // };
 
 
-class HttpServer
-{
-    public:
-    
-    HttpServer(boost::asio::io_context& io, unsigned int port) : io_context(io), acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {}
-    ~HttpServer() { if (sThread) sThread->join(); }
-    
-    // void Run()
-    // {
-    //     sThread.reset(new boost::thread(boost::bind(&HttpServer::thread_main, this)));
-    // }
-
-    boost::asio::io_context& io_context;
-
-    private:
-    tcp::acceptor acceptor;
-    boost::shared_ptr<boost::thread> sThread;
-
-    // void thread_main()
-    // {
-    //     // adds some work to the io_context
-    //     start_accept();
-    //     io_context.run();
-    // }
-
-    // void start_accept()
-    // {
-    //     boost::shared_ptr<Request> req (new Request(*this));
-    //     acceptor.async_accept(*req->socket,
-    //                          [this, req](const boost::system::error_code& error){
-    //                             if (!error) { req->answer(); }
-    //                             this->start_accept();
-    //                         });
-    // }
-
-    // void handle_accept(boost::shared_ptr<Request> req, const boost::system::error_code& error)
-    // {
-    //     if (!error) { req->answer(); }
-    //     start_accept();
-    // }
-};
-
-// Request::Request(HttpServer& server): server(server), io(server.io_context)
-// {
-//     socket.reset(new tcp::socket(server.io_context));
+// void read_async_file_simple(boost::asio::io_context& io, std::string& fileRes) {
+//     auto file = std::make_shared<boost::asio::stream_file>(
+//         io, 
+//         "big_file.txt",  // просто имя, т.к. файл в той же папке
+//         boost::asio::file_base::read_only
+//     );
 // }
 
-struct Point {
-    int x, y;
 
-    //auto operator<=>(const Point&) const = default;  // Космический корабль
-};
-//using namespace httpParser;
-
+void read_async_file_simple(boost::asio::io_context& io, std::string& fileRes) {
+    auto file = std::make_shared<boost::asio::stream_file>(
+        io, 
+        "/home/ivan/Programs/boost_asio_client_server_example/server/big_file.txt", 
+        boost::asio::file_base::read_only
+    );
+    
+    auto buffer = std::make_shared<std::vector<char>>(20 * 1024);
+    
+    auto read_callback = std::make_shared<std::function<void(const boost::system::error_code&, size_t)>>();
+    *read_callback = [file, buffer, &fileRes, read_callback](
+        const boost::system::error_code& error, size_t bytes_read) {
+        std::cout << "RES SIZE AFTER READ        " << fileRes.size() << "HERE" << "\n\n\n\n";
+        if (error == boost::asio::error::eof) {
+            std::cout << "RES SIZE AFTER READ\n\n\n\n\n" << fileRes << "HERE" << "\n\n\n\n";
+            return;
+        }
+        
+        if (error) {
+            return;
+        }
+        
+        fileRes.append(buffer->data(), bytes_read);
+        
+        file->async_read_some(
+            boost::asio::buffer(buffer->data(), buffer->size()),
+            *read_callback
+        );
+    };
+    
+    file->async_read_some(
+        boost::asio::buffer(buffer->data(), buffer->size()),
+        *read_callback
+    );
+}
 
 int main (int argc, char *argv[])
 {
    std::cout << "Boost version: " << BOOST_LIB_VERSION << std::endl;
    boost::asio::io_context io;
-   //boost::asio::stream_file file(io);
-   //HttpServer server(io, 8080);
-   //server.Run();
    std::cout << getGmtTime() << '\n';
-   //auto requestStr = parseHeader("first: second; sfesef;sfesdf; sfefse;    ");
-   //httpParser.sum(1,2);
-    
+
     Multiplexer mult;
-
-    Multiplexer::RoutePtr handler = boost::make_shared<SyncRouteHandler>("/", http_parser::HttpMethod::Method::GET, 
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto& config = ConfigProvider::getConfig();
-            auto staticPath = config.getValue<std::string>({"directory", "static"});
-            auto file = std::ifstream(staticPath+"/index.html");
-            std::ostringstream oss;
-            oss << file.rdbuf();
-            std::string htmp_data = oss.str();
-            if(!file.is_open()){
-                std::cout << "\n" << "not open" << '\n';
-            }
-            response.setStartLine(http_parser::HttpResponseStart("HTTP/1.1", http_parser::response::StatusCode::ok));
-            response.setHeader({"Content-Type", "text/html; charset=UTF-8"});
-            response.setHeader({"Content-Length", std::to_string(htmp_data.length())});
-            response.setbody(htmp_data);
-        }
-    );
-    auto async_handler = boost::make_shared<AsyncRouteHandler>(
-        "/go/go",
-        http_parser::HttpMethod::Method::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response, boost::asio::io_context& io,std::function<void()> completion) {
-        // std::string request_line;
-        // std::getline(request_stream, request_line);
-
-        std::string file_name = "../src/static/index.html";
-        std::cout << "Текущая рабочая директория: " 
-              << std::filesystem::current_path() << '\n';
-        std::ifstream file(file_name);
-        if (!file) {
-            std::cerr << "Ошибка открытия файла\n";
-        }
-        // std::ostringstream buffer;
-        // buffer << file.rdbuf(); // Считывание всего содержимого файла
-        // std::string content = buffer.str();
-
-        // auto fileStream = std::make_shared<boost::asio::stream_file>(io.get_executor(), file_name, boost::asio::stream_file::read_only);
-        // auto buffer = std::make_shared<std::vector<char>>(10000);
-        completion();
-        }
-    );
-
-    auto staticHandler = boost::make_shared<SyncRouteHandler>(
-        "/test/{fileName}",
-        http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto splitPaths = http_parser::splitPath(request.startLine.url.getPath());
-            std::cout<< "requst path file" << splitPaths.back() << '\n';
-            response.setStartLine(http_parser::HttpResponseStart("HTTP/1.1", http_parser::response::StatusCode::ok));
-            response.setHeader({"Content-Type", "text; charset=UTF-8"});
-            response.setHeader({"Content-Length", std::to_string(splitPaths.back().length())});
-            response.setbody(splitPaths.back());
-        }
-    );
-
-    auto jsHandler = boost::make_shared<SyncRouteHandler>(
-        "/js/**/{fileName}",
-        http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto splitPaths = http_parser::splitPath(request.startLine.url.getPath());
-            std::cout<< "requst path file" << splitPaths.back() << '\n';
-            auto& config = ConfigProvider::getConfig();
-            auto staticPath = config.getValue<std::string>({"directory", "static"});
-
-            auto jsIterator = std::find(splitPaths.begin(), splitPaths.end(), "js");
-            auto rangeAfterJs = boost::make_iterator_range(jsIterator, splitPaths.end());
-            auto pathStr = boost::algorithm::join(rangeAfterJs, "/");
-
-            auto file = std::ifstream(staticPath + "/" + pathStr);
-            std::ostringstream oss;
-            oss << file.rdbuf();
-            std::string js_data = oss.str();
-
-            response.setStartLine(http_parser::HttpResponseStart("HTTP/1.1", http_parser::response::StatusCode::ok));
-            response.setHeader({"Content-Type", "application/javascript; charset=UTF-8"});
-            response.setHeader({"Content-Length", std::to_string(js_data.length())});
-            response.setbody(js_data);
-        }
-    );
-
-    auto htmlTemplateHandler = boost::make_shared<SyncRouteHandler>(
-        "/components/{fileName}",
-        http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto& config = ConfigProvider::getConfig();
-            auto htmlTemplatesPath = config.getValue<std::string>({"directory", "html_templates"});
-            auto splitPath = http_parser::splitPath(request.startLine.url.getPath());
-            auto htmlTemplateFile = std::ifstream(htmlTemplatesPath + "/" +splitPath.back());
-            std::ostringstream htmlTemplateStream;
-            htmlTemplateStream << htmlTemplateFile.rdbuf();
-            auto htmlTemplateString = htmlTemplateStream.str();
-
-            response.setStartLine(http_parser::HttpResponseStart("HTTP/1.1", http_parser::response::StatusCode::ok));
-
-            response.setHeader({"Content-Type", "text; charset=UTF-8"});
-            response.setHeader({"Content-Lenght", std::to_string(htmlTemplateString.length())});
-
-            response.setbody(htmlTemplateString);
-        }
-    );
-
-    auto imageSvgHandler = boost::make_shared<SyncRouteHandler>(
-        "/image/svg/{fileName}",
-        http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto& config = ConfigProvider::getConfig();
-            auto splitUrl = http_parser::splitPath(request.startLine.url.getPath());
-            auto imagePath = config.getValue<std::string>({"directory", "image"}) + "/svg";
-            auto imageFile = std::ifstream(imagePath + "/" + splitUrl.back());
-            std::ostringstream imageStream;
-            imageStream << imageFile.rdbuf();
-            auto imageString = imageStream.str();
-
-            response.setStartLine({"HTTP/1.1", http_parser::response::StatusCode::ok});
-
-            response.setHeader({"Content-Type", "image/svg+xml"});
-            response.setHeader({"Content-Length", std::to_string(imageString.length())});
-
-            response.setbody(imageString);
-        }
-    );
-
-    auto imageJpegHandler = boost::make_shared<SyncRouteHandler>(
-        "/image/jpeg/{fileName}",
-        http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto& config = ConfigProvider::getConfig();
-            auto splitUrl = http_parser::splitPath(request.startLine.url.getPath());
-            auto imagePath = config.getValue<std::string>({"directory", "image"}) + "/jpeg";
-            auto imageFile = std::ifstream(imagePath + "/" + splitUrl.back());
-            std::ostringstream imageStream;
-            imageStream << imageFile.rdbuf();
-            auto imageString = imageStream.str();
-
-            response.setStartLine({"HTTP/1.1", http_parser::response::StatusCode::ok});
-
-            response.setHeader({"Content-Type", "image/jpeg"});
-            response.setHeader({"Content-Length", std::to_string(imageString.length())});
-
-            response.setbody(imageString);
-        }
-    );
-
-    auto cssHandler = boost::make_shared<SyncRouteHandler>(
-        "/css/{fileName}",
-        http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto& config = ConfigProvider::getConfig();
-            auto splitUrl = http_parser::splitPath(request.startLine.url.getPath());
-            auto cssPath = config.getValue<std::string>({"directory", "css"});
-            auto cssFile = std::ifstream(cssPath + "/" + splitUrl.back());
-            std::ostringstream cssStream;
-            cssStream << cssFile.rdbuf();
-            auto cssString = cssStream.str();
-
-            response.setStartLine({"HTTP/1.1", http_parser::response::StatusCode::ok});
-
-            response.setHeader({"Content-Type", "text/css; charset=utf-8"});
-            response.setHeader({"Content-Lenght", std::to_string(cssString.length())});
-
-            response.setbody(cssString);
-        }
-    );
-
-    auto localesHandler = boost::make_shared<SyncRouteHandler>(
-        "/locales/{fileName}",
-        http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
-            auto& config = ConfigProvider::getConfig();
-            std::string localesPath = config.getValue<std::string>({"directory","locales"});
-            auto splitPath = http_parser::splitPath(request.startLine.url.getPath());
-            auto localeFile = std::ifstream(localesPath + "/" + splitPath.back() + ".json");
-            
-            std::ostringstream localesStream;
-            localesStream << localeFile.rdbuf();
-            auto localesStr = localesStream.str();
-
-            response.setStartLine({"HTTP/1.1", http_parser::response::StatusCode::ok});
-
-            response.setHeader({"Content-Type", "text/json; charset=utf-8"});
-            response.setHeader({"Content-Lenght", std::to_string(localesStr.length())});
-
-            response.setbody(localesStr);
-        }
-    );
-
-
-    mult.AddRoute("/",http_parser::HttpMethod::GET,handler);
-    mult.AddRoute("/go/go", http_parser::HttpMethod::GET, async_handler);
-    mult.AddRoute("/{fileName}", http_parser::HttpMethod::GET, staticHandler);
-    mult.AddRoute("/js/**/{fileName}", http_parser::HttpMethod::GET, jsHandler);
-    mult.AddRoute("/components/{fileName}", http_parser::HttpMethod::GET, htmlTemplateHandler);
-    mult.AddRoute("/image/svg/{fileName}", http_parser::HttpMethod::GET, imageSvgHandler);
-    mult.AddRoute("/image/jpeg/{fileName}", http_parser::HttpMethod::GET, imageJpegHandler);
-    mult.AddRoute("/css/{fileName}", http_parser::HttpMethod::GET, cssHandler);
-    mult.AddRoute("/locales/{filename}", http_parser::HttpMethod::GET, localesHandler);
-    
-
+    std::string res;
+    read_async_file_simple(io, res);
+    registerStaticRoutes(mult);
     auto& config = ConfigProvider::getConfig();
     server::HttpServer server(io,mult,config.getValue<int>({"server", "port"}));
-    
+    std::cout << res.size() << "       RES SIZE HERE:!@!#!$!$!@" <<"\n" << "\n";
     server.run();
     
    return 0;

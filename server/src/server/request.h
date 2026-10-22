@@ -15,6 +15,7 @@
 
 using boost::asio::ip::tcp;
 namespace server{
+    
     class Request : public boost::enable_shared_from_this<Request> {
     public:
         explicit Request(boost::asio::io_context& io, Multiplexer& mult, boost::shared_ptr<ErrorHandlerManager> errorHandlManagerPtr);

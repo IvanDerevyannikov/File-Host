@@ -151,7 +151,7 @@ void Multiplexer::AddStaticRoute(const std::string& path, const std::string& fil
         http_parser::HttpMethod::GET,
         [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
             auto splitPaths = http_parser::splitPath(request.startLine.url.getPath());
-            std::cout<< "requst path file" << splitPaths.back() << '\n';
+            // std::cout<< "requst path file" << splitPaths.back() << '\n';
             response.setStartLine(http_parser::HttpResponseStart("HTTP/1.1", http_parser::response::StatusCode::ok));
             response.setHeader({"Content-Type", "text; charset=UTF-8"});
             response.setHeader({"Content-Length", std::to_string(splitPaths.back().length())});

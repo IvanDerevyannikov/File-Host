@@ -8,7 +8,7 @@ export default class LocaleManager {
 
     async loadLocale() {
         try {
-            const response = await fetch(`/locales/${this.lang}`);
+            const response = await fetch(`/locales/${this.lang}.json`);
 
             if (!response.ok) {
                 console.log("fail");

@@ -15,10 +15,12 @@ void SyncRouteHandler::Handle(http_parser::HttpRequest& request, http_parser::Ht
 AsyncRouteHandler::AsyncRouteHandler(std::string path, http_parser::HttpMethod::Method method, RouteAsyncCallback callback)
     : RouteHandler(path, method), callback_(callback){}
 
-void AsyncRouteHandler::AssyncHandle(http_parser::HttpRequest& request, http_parser::HttpResponse& response, 
-                                     boost::asio::io_context& io, std::function<void()> callback) const {
+void AsyncRouteHandler::AssyncHandle(boost::asio::io_context& io, 
+                                     http_parser::HttpRequest& request, 
+                                     http_parser::HttpResponse& response, 
+                                     std::function<void(const boost::system::error_code& code)> callback) const {
     
     if(callback_){
-        callback_(request, response, io, callback);
+        // callback_(io, request, response, callback);
     }
 }
