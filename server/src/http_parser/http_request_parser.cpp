@@ -1,4 +1,5 @@
 #include "http_request_parser.h"
+
 #include <sstream>
 #include <regex>
 #include <exception>
@@ -14,7 +15,7 @@ namespace http_parser{
         std::istringstream startLineStream(startLine);
         std::string methodToken, urlToken, versionToken;
 
-        if (!(startLineStream >> methodToken >> urlToken >> versionToken)) {
+        if(!(startLineStream >> methodToken >> urlToken >> versionToken)) {
             throw std::invalid_argument("Malformed start line: " + startLine);
         }
 
@@ -24,7 +25,7 @@ namespace http_parser{
         const std::regex urlPattern(
             R"(^(https?:\/\/)?((localhost(:\d+)?|[\da-z\.-]+)(\.[a-z\.]{2,6})?)?(\/[\w\.\-\/]*)*(\?([\w\-]+=[\w\-]*&?)*)?\/?$)"
         );
-        if (!std::regex_match(urlToken, urlPattern)) {
+        if(!std::regex_match(urlToken, urlPattern)) {
             throw std::invalid_argument("Invalid URL format: " + urlToken);
         }
 
@@ -35,32 +36,29 @@ namespace http_parser{
     }
 
 
-    http_parser::Url parseUrl(const std::string& urlStr){
+    http_parser::Url parseUrl(const std::string& urlStr) {
         auto url = http_parser::Url();
         auto usrStrIndex=0;
 
         size_t fragmentIndex = urlStr.find("#");
         size_t queryIndex = urlStr.find("?");
-        if(fragmentIndex!=std::string::npos && fragmentIndex>queryIndex){
+        if(fragmentIndex!=std::string::npos && fragmentIndex>queryIndex) {
             url.setFragment(urlStr.substr(fragmentIndex+1));
             url.setPath(urlStr.substr(0, fragmentIndex));
-        }
-        else if(fragmentIndex<queryIndex){
+        } else if(fragmentIndex<queryIndex) {
             url.setFragment(urlStr.substr(fragmentIndex+1, queryIndex-1));
             url.setPath(urlStr.substr(0, fragmentIndex));
-        }
-        else{
+        } else {
             url.setPath(urlStr);
         }
 
-        if(queryIndex!=std::string::npos && queryIndex<fragmentIndex){
+        if(queryIndex!=std::string::npos && queryIndex<fragmentIndex) {
             size_t queryEnd = (fragmentIndex != std::string::npos) ? fragmentIndex : urlStr.length();
             std::string queryStr = urlStr.substr(queryIndex + 1, queryEnd - queryIndex - 1);
                 
             url.setQuery(parseUrlQuery(queryStr));
             url.setPath(urlStr.substr(0, queryIndex));
-        }
-        else if(queryIndex>fragmentIndex){
+        } else if(queryIndex>fragmentIndex) {
             size_t queryEnd = urlStr.length();
             std::string queryStr = urlStr.substr(queryIndex+1, queryEnd - queryIndex - 1);
             url.setQuery(parseUrlQuery(queryStr));
@@ -75,16 +73,16 @@ namespace http_parser{
         std::vector<std::string> queryVec;
         size_t startQuery=0;
         size_t endQuery = queryString.find("&");
-        while(endQuery!=std::string::npos){
+        while(endQuery!=std::string::npos) {
             queryVec.push_back(queryString.substr(startQuery, endQuery-startQuery));
             startQuery=endQuery+1;
             endQuery= queryString.find("&", startQuery);
         }
         queryVec.push_back(queryString.substr(startQuery));
         
-        for(auto queryParameter: queryVec){
+        for(auto queryParameter: queryVec) {
             size_t parameterEnd = queryParameter.find("=");
-            if(parameterEnd==std::string::npos){
+            if(parameterEnd==std::string::npos) {
                 //throw std::exception("Bad query value");
             }
             std::string keyStr = decodeQuery(queryParameter.substr(0,parameterEnd));
@@ -97,37 +95,33 @@ namespace http_parser{
 
     std::string decodeQuery(const std::string& queryParameter){
         std::ostringstream decoded;
-        for(size_t i=0;i<queryParameter.length(); ++i){
-            if(queryParameter[i] == '%' && i+2 < queryParameter.length()){
+        for(size_t i=0;i<queryParameter.length(); ++i) {
+            if(queryParameter[i] == '%' && i+2 < queryParameter.length()) {
                 int hex;
                 std::istringstream hexStream(queryParameter.substr(i+1,2));
-                if(hexStream >> std::hex >> hex){
+                if(hexStream >> std::hex >> hex) {
                     decoded << static_cast<char>(hex);
                     i+=2;
-                }
-                else{
+                } else {
                     decoded << queryParameter[i];
                 }
-            }
-            else if(queryParameter[i]=='+'){
+            } else if(queryParameter[i]=='+') {
                 decoded << ' ';
-            }
-            else{
+            } else {
                 decoded << queryParameter[i];
             }
         }
         return decoded.str();
     }
 
-    std::string encodeQuery(const std::string& queryParameter){
+    std::string encodeQuery(const std::string& queryParameter) {
         std::ostringstream encoded;
         encoded.fill('0');
         encoded << std::hex;
-        for(auto c: queryParameter){
-            if(std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~'){
+        for(auto c: queryParameter) {
+            if(std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
                 encoded << c;
-            }
-            else{
+            } else {
                 encoded << '%' << std::setw(2) << static_cast<int>(static_cast<unsigned char>(c));
             }
         }
@@ -193,7 +187,7 @@ namespace http_parser{
         return request;
     }
 
-    std::string methodToString(const http_parser::HttpMethod::Method& method){
+    std::string methodToString(const http_parser::HttpMethod::Method& method) {
         if(method == HttpMethod::GET) {return "GET";}
         else if(method == HttpMethod::HEAD) {return "HEAD";}
         else if(method == HttpMethod::POST) {return "POST";}
@@ -206,7 +200,7 @@ namespace http_parser{
         return "GET";
     }
 
-    std::vector<std::string> parseHeaderValue(const std::string& value, const std::string& delimeterSymbols){
+    std::vector<std::string> parseHeaderValue(const std::string& value, const std::string& delimeterSymbols) {
         std::vector<std::string> parsedValue;
         size_t start = 0;
         size_t commaPos = value.find(delimeterSymbols);

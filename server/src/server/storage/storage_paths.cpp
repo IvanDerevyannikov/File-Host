@@ -1,19 +1,20 @@
 #include "storage_paths.h"
+
 #include<system_error>
 #include<stdexcept>
 
 StoragePaths::StoragePaths(std::filesystem::path root)
     : root_(std::move(root)) {}
 
-void StoragePaths::ensureDirectories() const{
+void StoragePaths::ensureDirectories() const {
 
-    std::vector<std::filesystem::path> dirs ={
+    std::vector<std::filesystem::path> dirs = {
         root_,
         uploads(),
         tmp(),
     };
 
-    for( const auto& dir: dirs){
+    for(const auto& dir: dirs) {
         std::error_code ec;
 
         std::filesystem::create_directories(dir,ec);

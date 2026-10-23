@@ -1,14 +1,16 @@
 #ifndef WILDCARDMATCHER
 #define WILDCARDMATCHER
 
-#include "matcher.h"
 #include <string>
 
+#include "matcher.h"
+
 class WildcardMatcher: public Matcher {
-public:
+ public:
     WildcardMatcher(const std::string& pattern);
     bool checkMatch(const std::string& path_segment) override;
-private:
+ 
+ private:
     std::string pattern_;
 
 };

@@ -3,6 +3,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
+
 #include "multiplexer.h"
 #include "error_handlers/error_handler_factory.h"
 #include "error_handlers/error_handler_manager.h"
@@ -12,14 +13,13 @@ namespace server{
     class Request;
 
     class HttpServer{
-        friend class Request;
-        public:
+     public:
         HttpServer(boost::asio::io_context& io,Multiplexer& mult , size_t port);
         ~HttpServer();
 
         void run();
 
-        private:
+     private:
         void startAccept();
         void handleAccept(boost::shared_ptr<server::Request> request, const boost::system::error_code& error);
 
@@ -27,8 +27,10 @@ namespace server{
         boost::asio::io_context& io_;
         Multiplexer& mult_;
         boost::shared_ptr<ErrorHandlerManager> errorHandlManagerPtr_;
+
+        friend class Request;
     };
 
 }
 
-#endif
+#endif  //SERVER_HEAD

@@ -1,13 +1,14 @@
 #ifndef ERROR_HANDLER_FACTORY_HEAD
 #define ERROR_HANDLER_FACTORY_HEAD
 
-#include "error_handler.h"
 #include <memory>
 #include <map>
 
+#include "error_handler.h"
+
 class AbstractErrorHandlerCreator{
 
-public:
+ public:
     virtual ~AbstractErrorHandlerCreator() = default;
     virtual void errorCreator(){}
 
@@ -17,7 +18,7 @@ public:
 
 template<typename ErrorHandler>
 class ErrorHandlerCreator: public AbstractErrorHandlerCreator{
-public:
+ public:
 
     std::unique_ptr<IErrorHandler> create() const override{
         return std::make_unique<ErrorHandler>();
@@ -26,7 +27,7 @@ public:
 };
 
 class ErrorHandlerFactory{
-public:
+ public:
     enum class ErrorHandlerType{
         JsonErrorType,
         ImageErrorType,
@@ -34,8 +35,8 @@ public:
         DefaultType,
     };
 
-public:
-    std::unique_ptr<IErrorHandler> createErrorHandler(ErrorHandlerFactory::ErrorHandlerType type){
+ public:
+    std::unique_ptr<IErrorHandler> createErrorHandler(ErrorHandlerFactory::ErrorHandlerType type) {
         
         if(creatorMap_.find(type)!=creatorMap_.end()){
             return creatorMap_[type]->create();
@@ -44,7 +45,7 @@ public:
     }
     
     template <typename ErrorHandler>
-    void addErrorHandler(ErrorHandlerFactory::ErrorHandlerType type){
+    void addErrorHandler(ErrorHandlerFactory::ErrorHandlerType type) {
         //auto creatorMapIt = creatorMap_.find(type);
 
         if(creatorMap_.find(type)==creatorMap_.end()){
@@ -52,13 +53,13 @@ public:
         }
     }
 
-    void initialize(){
+    void initialize() {
         addErrorHandler<JsonErrorHandler>(ErrorHandlerType::JsonErrorType);
         addErrorHandler<HtmlErrorHandler>(ErrorHandlerType::HtmlErrorType);
         addErrorHandler<ImageErrorHandler>(ErrorHandlerType::ImageErrorType);
         addErrorHandler<DefaultErrorHandler>(ErrorHandlerType::DefaultType);
     }
-private:
+ private:
 
     std::map<ErrorHandlerType, std::unique_ptr<AbstractErrorHandlerCreator>> creatorMap_;
 };

@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace http_parser{
-    namespace response{
+    namespace response {
 
         enum StatusCode{
             contin = 100,
@@ -59,7 +59,7 @@ namespace http_parser{
         };
     }
     
-    const std::unordered_map<response::StatusCode,const std::string> statusCode ={
+    const std::unordered_map<response::StatusCode,const std::string> statusCode = {
         {response::StatusCode::contin, "continue"},
         {response::StatusCode::switching_protocols, "switching protocols"},
         {response::StatusCode::processing, "processing"},
@@ -110,13 +110,12 @@ namespace http_parser{
     };
 
     class HttpResponseStart{
-        public:
-
+     public:
         HttpResponseStart() = default;
         HttpResponseStart(std::string version, response::StatusCode statusCode);
         std::string getStartString();
 
-        private:
+     private:
         std::string version_;
         response::StatusCode statusCode_;
     };
@@ -127,8 +126,7 @@ namespace http_parser{
     };
 
     class HttpResponse{
-    public:
-
+     public:
         HttpResponse() = default;
         HttpResponse(HttpResponseStart startLine, std::vector<Header> headers, std::string body);
 
@@ -137,8 +135,8 @@ namespace http_parser{
         void setStartLine(const std::string& version, const response::StatusCode& status);
         void setHeader(const Header& header);
         void setbody(const std::string& body);
-    private:
-
+        
+     private:
         HttpResponseStart startLine_;
         std::vector<Header> headers_;
         std::string body_;

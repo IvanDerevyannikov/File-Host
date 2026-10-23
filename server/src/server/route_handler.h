@@ -3,7 +3,9 @@
 
 #include <functional>
 #include <string>
+
 #include <boost/asio.hpp>
+
 #include "../http_parser/http_request.h"
 #include "../http_parser/http_response.h"
 
@@ -13,7 +15,7 @@ using RouteAsyncCallback = std::function<void(boost::asio::io_context& io,
                                               http_parser::HttpResponse& response, 
                                               std::function<void()>)>;
 
-class RouteHandler {
+class RouteHandler{
  public:
 
   RouteHandler(std::string path, http_parser::HttpMethod::Method method);
@@ -35,18 +37,18 @@ class RouteHandler {
 };
 
 class SyncRouteHandler: public RouteHandler{
-  public:
+ public:
   
   SyncRouteHandler(std::string path, http_parser::HttpMethod::Method method, RouteSyncCallback callback);
 
   void Handle(http_parser::HttpRequest& request, http_parser::HttpResponse& response) const override;
   
-  private:
+ private:
   RouteSyncCallback callback_;
 };
 
 class AsyncRouteHandler: public RouteHandler{
-  public:
+ public:
 
   AsyncRouteHandler(std::string path, http_parser::HttpMethod::Method method, RouteAsyncCallback callback);
 
@@ -55,7 +57,7 @@ class AsyncRouteHandler: public RouteHandler{
                     http_parser::HttpResponse& response, 
                     std::function<void(const boost::system::error_code& ec)>) const override;
 
-  private:
+ private:
   RouteAsyncCallback callback_;
 };
 

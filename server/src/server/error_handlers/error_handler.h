@@ -1,13 +1,13 @@
 #ifndef ERROR_HANDLER_HEAD
 #define ERROR_HANDLER_HEAD
 
-#include "../../http_parser/http_response.h"
 #include <memory>
+
+#include "../../http_parser/http_response.h"
 #include "../request_error_exception.h"
 
 class IErrorHandler{
-public:
-
+ public:
     virtual ~IErrorHandler() = default;
 
     virtual void handle400Error(http_parser::HttpResponse& response) = 0;
@@ -18,19 +18,16 @@ public:
 
 
 class DefaultErrorHandler: public IErrorHandler{
-public:
-
+ public:
     void handle400Error(http_parser::HttpResponse& response) override{}
     void handle404Error(http_parser::HttpResponse& response) override{}
     void handle405Error(http_parser::HttpResponse& response) override{}
     void handle500Error(http_parser::HttpResponse& response) override{}
 
-
 };
 
 class JsonErrorHandler: public IErrorHandler{
-public:
-
+ public:
     void handle400Error(http_parser::HttpResponse& response) override{}
     void handle404Error(http_parser::HttpResponse& response) override{}
     void handle405Error(http_parser::HttpResponse& response) override{}
@@ -38,8 +35,7 @@ public:
 };
 
 class HtmlErrorHandler: public IErrorHandler{
-public:
-
+ public:
     void handle400Error(http_parser::HttpResponse& response) override;
     void handle404Error(http_parser::HttpResponse& response) override;
     void handle405Error(http_parser::HttpResponse& response) override;
@@ -48,8 +44,7 @@ public:
 
 
 class ImageErrorHandler: public IErrorHandler{
-public:
-
+ public:
     void handle400Error(http_parser::HttpResponse& response) override;
     void handle404Error(http_parser::HttpResponse& response) override;
     void handle405Error(http_parser::HttpResponse& response) override;
@@ -72,7 +67,6 @@ public:
 //     const std::unique_ptr<JsonErrorHandler> jsonErrHandl_;
 //     const std::unique_ptr<ImageErrorHandler> imageErrHandl;
 // };
-
 
 
 #endif // ERROR_HANDLER_HEAD

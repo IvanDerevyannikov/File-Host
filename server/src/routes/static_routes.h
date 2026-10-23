@@ -8,7 +8,7 @@
 void asyncHandler(boost::asio::io_context& io, 
                   http_parser::HttpRequest& req, 
                   http_parser::HttpResponse& res, 
-                  std::function<void(const boost::system::error_code& code)> callback){
+                  std::function<void(const boost::system::error_code& code)> callback) {
     auto& config = ConfigProvider::getConfig();
     // auto directoryPath = config.getValue<std::string>(configPath);
     auto fileName = http_parser::splitPath(req.startLine.url.getPath()).back();
@@ -23,7 +23,7 @@ void asyncHandler(boost::asio::io_context& io,
         callback(ec);
     }
     auto buffer = boost::make_shared<std::vector<char>>(fileSize);
-    read_async_file_simple(file, buffer, [buffer, &res, &callback](const boost::system::error_code& code, size_t bytes_read){
+    read_async_file_simple(file, buffer, [buffer, &res, &callback](const boost::system::error_code& code, size_t bytes_read) {
         res.setStartLine({"HTTP/1.1", http_parser::response::StatusCode::ok});
         res.setHeader({"Content-Type", "text; charset=UTF-8"});
         res.setHeader({"Content-Length", std::to_string(buffer->size())});
@@ -34,8 +34,7 @@ void asyncHandler(boost::asio::io_context& io,
 
 }
 
-inline void registerStaticRoutes(Multiplexer& mult){
-
+inline void registerStaticRoutes(Multiplexer& mult) {
     mult.AddRoute("/", http_parser::HttpMethod::GET, StaticFileHandlerFabrics::htmlHandler());
     mult.AddRoute("/css/{fileName}", http_parser::HttpMethod::GET, StaticFileHandlerFabrics::cssHandler());
     mult.AddRoute("/js/**/{fileName}", http_parser::HttpMethod::GET, StaticFileHandlerFabrics::jsHandler());

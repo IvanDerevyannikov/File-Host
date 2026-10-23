@@ -6,8 +6,7 @@
 #include <vector>
 
 class StoragePaths{
-    
-public:
+ public:
     explicit StoragePaths(std::filesystem::path root);
 
     void ensureDirectories() const;
@@ -18,7 +17,7 @@ public:
     std::filesystem::path tmp() const { return root_ / "tmp";}
     
 
-private:
+ private:
     std::filesystem::path root_;
 };
 

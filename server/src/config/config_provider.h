@@ -1,20 +1,21 @@
 #ifndef CONFIG_PROVIDER_HEAD
 #define CONFIG_PROVIDER_HEAD
 
-#include "config.h"
-#include <memory>
 #include <string>
+#include <memory>
+
+#include "config.h"
 
 class ConfigProvider {
-public:
+ public:
     static Config& getConfig() {
         static ConfigProvider instance("../.config");
         return *instance.configPtr_;
     }
 
-private:
+ private:
     ConfigProvider(const std::string& path) {
-        if(configPtr_ == nullptr){
+        if(configPtr_ == nullptr) {
             configPtr_.reset(new Config(path));
         }
     }
@@ -25,4 +26,4 @@ private:
     std::unique_ptr<Config> configPtr_;
 };
 
-#endif
+#endif  //CONFIG_PROVIDER_HEAD

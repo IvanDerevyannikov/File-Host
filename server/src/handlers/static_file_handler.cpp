@@ -1,12 +1,13 @@
 #include "static_file_handler.h"
-#include "../server/route_handler.h"
-#include "../config/config.h"
-#include "../config/config_provider.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/range/iterator_range.hpp>
 
+#include "../server/route_handler.h"
+#include "../config/config.h"
+#include "../config/config_provider.h"
 
 
 Multiplexer::RoutePtr StaticFileHandlerFabrics::create(
@@ -18,15 +19,15 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::create(
     return boost::make_shared<SyncRouteHandler>(
         path, 
         method,
-        [path, configPath, contentType](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
+        [path, configPath, contentType](http_parser::HttpRequest& request, http_parser::HttpResponse& response) {
             auto& config = ConfigProvider::getConfig();
             auto directoryPath = config.getValue<std::string>(configPath);
             auto fileName = http_parser::splitPath(request.startLine.url.getPath()).back();
             std::optional<FileData> fileData;
-            if(path=="/"){
+            if(path=="/") {
                 fileData = readFile(directoryPath+"/index.html");
             } 
-            else{
+            else {
                 fileData = readFile(directoryPath + "/" + fileName);
             }
 
@@ -45,11 +46,11 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::createWildcardPathHandler(
     const std::vector<std::string>& configPath,
     http_parser::HttpMethod::Method method,
     const std::string& contentType
-){
+) {
     return boost::make_shared<SyncRouteHandler>(
         path, 
         method,
-        [path, configPath, contentType](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
+        [path, configPath, contentType](http_parser::HttpRequest& request, http_parser::HttpResponse& response) {
             auto splitPaths = http_parser::splitPath(request.startLine.url.getPath());
             auto& config = ConfigProvider::getConfig();
             auto staticPath = config.getValue<std::string>(configPath);
@@ -57,7 +58,7 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::createWildcardPathHandler(
             auto wildcardPos = path.find("/**/");
             auto pathBeforeWildcard = path.substr(0, wildcardPos);
 
-            if (!pathBeforeWildcard.empty() && pathBeforeWildcard.back() == '/') {
+            if(!pathBeforeWildcard.empty() && pathBeforeWildcard.back() == '/') {
                 pathBeforeWildcard.pop_back();
             }
 
@@ -75,14 +76,14 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::createWildcardPathHandler(
             response.setHeader({"Content-Type", contentType});
             response.setHeader({"Content-Length", std::to_string(fileData->size)});
             response.setHeader({"Server", "FileHostServer/1.0"});
-            //TO DO
+            //TODO
             //response.setHeader({"Cache-Control", "public, max-age=3600 immutable"})
             response.setbody(fileData->data);
         }
     );
 }
 
-Multiplexer::RoutePtr StaticFileHandlerFabrics::htmlHandler(){
+Multiplexer::RoutePtr StaticFileHandlerFabrics::htmlHandler() {
     return create(
         "/",
         {"directory", "static"}, 
@@ -91,7 +92,7 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::htmlHandler(){
     );
 }
 
-Multiplexer::RoutePtr StaticFileHandlerFabrics::jsHandler(){
+Multiplexer::RoutePtr StaticFileHandlerFabrics::jsHandler() {
     return createWildcardPathHandler(
         "/js/**/{fileName}",
         {"directory", "js"},
@@ -100,7 +101,7 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::jsHandler(){
     );
 }
 
-Multiplexer::RoutePtr StaticFileHandlerFabrics::cssHandler(){
+Multiplexer::RoutePtr StaticFileHandlerFabrics::cssHandler() {
     return create(
         "/css/{fileName}",
         {"directory", "css"},
@@ -109,7 +110,7 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::cssHandler(){
     );
 }
 
-Multiplexer::RoutePtr StaticFileHandlerFabrics::htmlTemplateHandler(){
+Multiplexer::RoutePtr StaticFileHandlerFabrics::htmlTemplateHandler() {
     return create(
         "/components/{fileName}",
         {"directory", "html_templates"},
@@ -118,7 +119,7 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::htmlTemplateHandler(){
     );
 }
 
-Multiplexer::RoutePtr StaticFileHandlerFabrics::svgHandler(){
+Multiplexer::RoutePtr StaticFileHandlerFabrics::svgHandler() {
     return create(
         "/image/svg/{fileName}",
         {"directory", "image", "svg"},
@@ -127,7 +128,7 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::svgHandler(){
     );
 }
 
-Multiplexer::RoutePtr StaticFileHandlerFabrics::jpegHandler(){
+Multiplexer::RoutePtr StaticFileHandlerFabrics::jpegHandler() {
     return create(
         "/image/jpeg/{fileName}",
         {"directory", "image", "jpeg"},
@@ -136,7 +137,7 @@ Multiplexer::RoutePtr StaticFileHandlerFabrics::jpegHandler(){
     );
 }
 
-Multiplexer::RoutePtr StaticFileHandlerFabrics::localesHandler(){
+Multiplexer::RoutePtr StaticFileHandlerFabrics::localesHandler() {
     return create(
         "/locales/{fileName}",
         {"directory","locales"},

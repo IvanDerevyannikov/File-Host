@@ -1,7 +1,12 @@
 #include "multiplexer.h"
+
 #include <exception>
+#include <memory> 
+#include <stdexcept> 
+
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
+
 #include "request_error_exception.h"
 #include "route_handler.h"
 #include "../http_parser/http_response.h"
@@ -9,40 +14,37 @@
 #include "../http_parser/http_url.h"
 #include "matchers/variable_matcher.h"
 #include "matchers/wildcard_matcher.h"
-#include <memory> 
-#include <stdexcept> 
 
 Multiplexer::RoutePtr Multiplexer::GetRoute(const std::string& path, http_parser::HttpMethod::Method method) {
     bool isPathMatch = false;
     std::vector<http_parser::HttpMethod::Method> methods;
     auto splitPathVec = http_parser::splitPath(path);
 
-    for( const auto& handler: handlers_ ) {
+    for(const auto& handler: handlers_) {
         auto matchers = std::get<0>(handler);
         size_t matcherInd = 0;
         size_t splitStrInd = 0;
         isPathMatch = true;
 
-        while(splitStrInd < splitPathVec.size()){
+        while(splitStrInd < splitPathVec.size()) {
             
-            if(matcherInd>matchers.size()-1){
+            if(matcherInd>matchers.size()-1) {
                 isPathMatch=false;
                 break;
             }
 
-            if(boost::dynamic_pointer_cast<WildcardMatcher>(matchers[matcherInd])){
+            if(boost::dynamic_pointer_cast<WildcardMatcher>(matchers[matcherInd])) {
                 size_t remainingMatchers = matchers.size() - matcherInd -1;
                 size_t maxEat = splitPathVec.size() - splitStrInd - remainingMatchers;
-                if(maxEat == 0){
+                if(maxEat == 0) {
                     isPathMatch=true;
                     matcherInd++;
                 }
                 bool wildcardMatched = false;
-                for(size_t eat = 0; eat< maxEat; eat++){
-                    if(matchers[matcherInd]->checkMatch(splitPathVec[splitStrInd+eat])){
+                for(size_t eat = 0; eat < maxEat; eat++){
+                    if(matchers[matcherInd]->checkMatch(splitPathVec[splitStrInd+eat])) {
                         wildcardMatched = true;
-                    } 
-                    else{
+                    } else {
                         wildcardMatched = false;
                         break;
                     }
@@ -53,32 +55,30 @@ Multiplexer::RoutePtr Multiplexer::GetRoute(const std::string& path, http_parser
                     splitStrInd+=maxEat;
                     matcherInd++;
                 }
-            }
-            else if(!boost::dynamic_pointer_cast<WildcardMatcher>(matchers[matcherInd]) && 
-                    matchers[matcherInd]->checkMatch(splitPathVec[splitStrInd])) {
+            } else if(!boost::dynamic_pointer_cast<WildcardMatcher>(matchers[matcherInd]) && 
+                      matchers[matcherInd]->checkMatch(splitPathVec[splitStrInd])) {
                 isPathMatch=true;
                 matcherInd++;
                 splitStrInd++;
-            }
-            else {
+            } else {
                 isPathMatch=false;
                 break;
             }
             
         }
         
-        if(!isPathMatch){
+        if(!isPathMatch) {
             continue;
         }
         
         methods.push_back(std::get<3>(handler));
         
-        if(std::get<3>(handler) == method){
+        if(std::get<3>(handler) == method) {
             return std::get<1>(handler);
         }
     }
     
-    if( isPathMatch ){
+    if(isPathMatch) {
         std::string errorMessage;
         errorMessage += "This method" + http_parser::methodToString(method) + "is not supported on this server." + 
         "\n" + "Available methods of " + path + " is: ";
@@ -89,8 +89,7 @@ Multiplexer::RoutePtr Multiplexer::GetRoute(const std::string& path, http_parser
         
         errorMessage.erase(errorMessage.size() - 3, 2);
         throw RequestErrorExtension(errorMessage, http_parser::response::StatusCode::method_not_allowed);
-    }
-    else{
+    } else {
         std::string errorMessage("This file is not existed.");
         throw RequestErrorExtension( errorMessage, http_parser::response::StatusCode::not_found);
     }
@@ -104,23 +103,20 @@ void Multiplexer::AddRoute(const std::string& path, http_parser::HttpMethod::Met
     bool hasVaribleMatcher = false;
     bool hasWildcardMathcer = false;
     
-    for(auto splitPath: splitPathVec){
-
-        if(splitPath[0]=='{'){
-            if(hasVaribleMatcher){
+    for(auto splitPath: splitPathVec) {
+        if(splitPath[0]=='{') {
+            if(hasVaribleMatcher) {
                 throw std::invalid_argument("Shood be only one variable argument");
             }
             matcherVec.push_back(MatcherPrt(new VariableMatcher(splitPath.substr(1,splitPath.length()-2))));
             hasVaribleMatcher = true;
-        }
-        else if(splitPath=="**"){
-            if(hasWildcardMathcer){
+        } else if(splitPath=="**") {
+            if(hasWildcardMathcer) {
                 throw std::invalid_argument("Shood be only one wildcard argument");
             }
             matcherVec.push_back(MatcherPrt(new WildcardMatcher("**")));
             hasWildcardMathcer = true;
-        }
-        else{
+        } else {
             matcherVec.push_back(MatcherPrt(new PathMatcher(splitPath)));
         }
 
@@ -129,15 +125,12 @@ void Multiplexer::AddRoute(const std::string& path, http_parser::HttpMethod::Met
     for(size_t handlerInd=0; handlerInd < handlers_.size(); handlerInd++) {
         auto muxPath = std::get<2>(handlers_[handlerInd]);
 
-        if(muxPath == path){
+        if(muxPath == path) {
             auto muxMethod = std::get<3>(handlers_[handlerInd]);
 
-            if(muxMethod == method){
-
+            if(muxMethod == method) {
                 handlers_.erase(std::next(handlers_.begin(),handlerInd));
-            
             }
-
         }
 
     }
@@ -145,11 +138,11 @@ void Multiplexer::AddRoute(const std::string& path, http_parser::HttpMethod::Met
     handlers_.push_back(std::make_tuple(matcherVec, route, path, method));
 }
 
-void Multiplexer::AddStaticRoute(const std::string& path, const std::string& fileSystemPath){
+void Multiplexer::AddStaticRoute(const std::string& path, const std::string& fileSystemPath) {
     auto staticFileRouter = boost::make_shared<SyncRouteHandler>(
         "/{fileName}",
         http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
+        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response) {
             auto splitPaths = http_parser::splitPath(request.startLine.url.getPath());
             // std::cout<< "requst path file" << splitPaths.back() << '\n';
             response.setStartLine(http_parser::HttpResponseStart("HTTP/1.1", http_parser::response::StatusCode::ok));
@@ -162,7 +155,7 @@ void Multiplexer::AddStaticRoute(const std::string& path, const std::string& fil
     auto jsFileRoute = boost::make_shared<SyncRouteHandler>(
         "/js/{fileName}", 
         http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
+        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response) {
 
         }
     );
@@ -170,7 +163,7 @@ void Multiplexer::AddStaticRoute(const std::string& path, const std::string& fil
     auto imageFileRoute = boost::make_shared<SyncRouteHandler>(
         "image/{fileName}",
         http_parser::HttpMethod::GET,
-        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response){
+        [](http_parser::HttpRequest& request, http_parser::HttpResponse& response) {
 
         }
     );
@@ -182,12 +175,11 @@ void Multiplexer::RemoveRoute(const std::string& path, http_parser::HttpMethod::
     for(size_t handlerInd = 0; handlerInd < handlers_.size(); handlerInd++) {
         auto muxPath = std::get<2>(handlers_[handlerInd]);
         
-        if(muxPath == path){
+        if(muxPath == path) {
             auto maxMethod = std::get<3>(handlers_[handlerInd]);
             
-            if(maxMethod == method){
+            if(maxMethod == method) {
                 handlers_.erase(std::next(handlers_.begin(),handlerInd));
-            
             }    
         }
     

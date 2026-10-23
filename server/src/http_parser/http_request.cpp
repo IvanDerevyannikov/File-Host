@@ -3,7 +3,7 @@
 
 namespace http_parser{
 
-    HttpMethod::HttpMethod(const std::string& methodStr): methodStr_(methodStr){
+    HttpMethod::HttpMethod(const std::string& methodStr): methodStr_(methodStr) {
         if(methodStr == "GET") {method_ = HttpMethod::GET;}
         else if(methodStr == "HEAD") {method_ = HttpMethod::HEAD;}
         else if(methodStr == "POST")   {method_ = HttpMethod::POST;}
@@ -13,10 +13,10 @@ namespace http_parser{
         else if(methodStr == "OPTIONS") {method_ = HttpMethod::OPTIONS;}
         else if(methodStr == "TRACE") {method_ = HttpMethod::TRACE;}
         else if(methodStr == "PATCH") {method_ = HttpMethod::PATCH;}
-        else{throw std::invalid_argument("Request Method is not valid " + methodStr);}
+        else {throw std::invalid_argument("Request Method is not valid " + methodStr);}
     }
 
-    HttpMethod::HttpMethod(const HttpMethod::Method& method): method_(method){
+    HttpMethod::HttpMethod(const HttpMethod::Method& method): method_(method) {
         if(method_ == HttpMethod::GET) {methodStr_ = "GET";}
         else if(method_ == HttpMethod::HEAD) {methodStr_ = "HEAD";}
         else if(method_ == HttpMethod::POST) {methodStr_ = "POST";}
@@ -28,11 +28,11 @@ namespace http_parser{
         else if(method_ == HttpMethod::PATCH) {methodStr_ = "PATCH";}
     }
 
-    HttpMethod::Method HttpMethod::getMethod(){
+    HttpMethod::Method HttpMethod::getMethod() {
         return method_;
     }
 
-    std::string HttpMethod::toString(){
+    std::string HttpMethod::toString() {
         return methodStr_;
     }
 

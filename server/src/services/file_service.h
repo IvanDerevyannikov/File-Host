@@ -7,21 +7,23 @@
 
 #include "../server/storage/storage_paths.h"
 
-struct FileInfo {
+struct FileInfo{
     std::string id;
     std::string name;
     std::uintmax_t size = 0;
-    std::string contentType;
-    bool isDirectory;
+    std::string extension;
+    bool isDirectory = false;
+    std::string createdAt;
+    std::string updatedAt;
 };
 
 
 template <typename T>
-struct CorrectResponse {
+struct CorrectResponse{
     T value;
 };
 
-struct ErrorResponse {
+struct ErrorResponse{
     std::string message;
     int httpCode;
 };
@@ -30,8 +32,7 @@ template <typename T>
 using Result = std::variant<T,ErrorResponse>;
 
 class FileService{
-
-public:
+ public:
     FileService(StoragePaths paths);
 
     Result<std::vector<FileInfo>> list();
@@ -39,7 +40,7 @@ public:
     Result<void> remove(const std::string& fileName);
 
 
-private:
+ private:
     StoragePaths paths_;
 };
 

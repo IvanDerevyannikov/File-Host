@@ -1,23 +1,23 @@
 #ifndef ERROR_HANDLER_MANAGER_HEAD
 #define ERROR_HANDLER_MANAGER_HEAD
 
+#include <memory>
+#include <string>
+
+#include <boost/shared_ptr.hpp>
+
 #include "error_handler_factory.h"
 #include "error_handler.h"
 #include "../../http_parser/http_request.h"
 #include "../../http_parser/http_response.h"
-#include <memory>
-#include <string>
-#include <boost/shared_ptr.hpp>
 
 
 class ErrorHandlerManager{
-public:
+ public:
     using errFactPtr = boost::shared_ptr<ErrorHandlerFactory>;
     using errHandlPtr = std::unique_ptr<IErrorHandler>;
 
-    ErrorHandlerManager(errFactPtr errorFactoryPtr): errorFactoryPtr_(errorFactoryPtr){
-        
-    }
+    ErrorHandlerManager(errFactPtr errorFactoryPtr): errorFactoryPtr_(errorFactoryPtr) {}
 
     errHandlPtr manageErrorHandler(const http_parser::HttpRequest& req);
     errHandlPtr manageErrorHandler(const std::string& acceptType);
@@ -29,7 +29,7 @@ public:
 
     void asyncExecuteError();
 
-private:
+ private:
     void routeError(http_parser::HttpResponse& res, errHandlPtr errorHandler, http_parser::response::StatusCode statusCode);
     errFactPtr errorFactoryPtr_;
 };

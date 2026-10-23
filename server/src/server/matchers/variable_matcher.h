@@ -4,15 +4,14 @@
 #include "matcher.h"
 
 class VariableMatcher: public Matcher{
-
-public:
+ public:
     VariableMatcher(const std::string& varible);
 
     bool checkMatch(const std::string& variable_segment) override;
 
-private:
+ private:
     std::string variable_;
-
+    
 };
 
 

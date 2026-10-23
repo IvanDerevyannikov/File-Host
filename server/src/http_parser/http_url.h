@@ -7,7 +7,6 @@
 
 namespace http_parser{
 
-
     inline std::vector<std::string> splitPath(std::string_view path) {
         std::vector<std::string> segments;
         
@@ -34,7 +33,6 @@ namespace http_parser{
                 segments.emplace_back(path.substr(startSegment));
                 break;
             }
-
             if (endSegment > startSegment) {
                 segments.emplace_back(path.substr(startSegment, endSegment - startSegment));
             }
@@ -45,12 +43,12 @@ namespace http_parser{
         return segments;
     }
 
-    class Url {
+    class Url{
 
-    public:
+     public:
         Url(){};
         
-        Url& operator=(const Url& other){
+        Url& operator=(const Url& other) {
             this->url_ = other.url_;
             this->fragment_= other.fragment_;
             this->query_ = other.query_;
@@ -58,27 +56,27 @@ namespace http_parser{
             return * this;
         }
 
-        void setUrl(const std::string& url){
+        void setUrl(const std::string& url) {
             url_=url;
         }
 
-        void setPath(const std::string& path){
+        void setPath(const std::string& path) {
             path_=path;
         }
 
-        void setQuery(const std::unordered_map<std::string, std::string>& query){
+        void setQuery(const std::unordered_map<std::string, std::string>& query) {
             query_=query;
         }
 
-        void setFragment(const std::string& fragment){
+        void setFragment(const std::string& fragment) {
             fragment_=fragment;
         }
 
-        const std::string getUrl() const{
+        const std::string getUrl() const {
             return url_;
         }
 
-        const std::string getPath() const{
+        const std::string getPath() const {
             return path_;
         }
 
@@ -86,10 +84,10 @@ namespace http_parser{
             return query_;
         }
 
-        const std::string getFragment() const{
+        const std::string getFragment() const {
             return fragment_;
         };
-    private:
+     private:
         std::string url_;
         std::string path_;
         std::string fragment_;
@@ -98,4 +96,4 @@ namespace http_parser{
 
 }
 
-#endif
+#endif  //HTTP_URL_HEAD

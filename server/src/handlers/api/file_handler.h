@@ -6,11 +6,8 @@
 #include "../../http_parser/http_response.h"
 #include "../../services/file_service.h"
 
-
 class FileHandler{
-
-public:
-
+ public:
     explicit FileHandler();
 
     Multiplexer::RoutePtr getFilePath();
@@ -19,9 +16,8 @@ public:
     Multiplexer::RoutePtr getFile();
     Multiplexer::RoutePtr postFile();
 
-private:
+ private:
     FileService fileService_;
-
 };
 
 

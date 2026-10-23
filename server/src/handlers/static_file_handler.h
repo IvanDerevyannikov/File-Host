@@ -10,29 +10,8 @@
 #include "../http_parser/http_response.h"
 #include "../utils/fileUtils.h"
 
-
-
 class StaticFileHandlerFabrics{
-
-
-private:
-
-    static Multiplexer::RoutePtr create(
-        const std::string& path,
-        const std::vector<std::string>& configPath,
-        http_parser::HttpMethod::Method method,
-        const std::string& contentType
-    );
-
-    static Multiplexer::RoutePtr createWildcardPathHandler(
-        const std::string& path,
-        const std::vector<std::string>& configPath,
-        http_parser::HttpMethod::Method method,
-        const std::string& contentTypes
-    );
-
-public:
-
+ public:
     static Multiplexer::RoutePtr htmlHandler();
     static Multiplexer::RoutePtr jsHandler();
     static Multiplexer::RoutePtr cssHandler();
@@ -41,8 +20,20 @@ public:
     static Multiplexer::RoutePtr jpegHandler();
     static Multiplexer::RoutePtr localesHandler();
 
-};
+ private:
+    static Multiplexer::RoutePtr create(
+        const std::string& path,
+        const std::vector<std::string>& configPath,
+        http_parser::HttpMethod::Method method,
+        const std::string& contentType);
 
+    static Multiplexer::RoutePtr createWildcardPathHandler(
+        const std::string& path,
+        const std::vector<std::string>& configPath,
+        http_parser::HttpMethod::Method method,
+        const std::string& contentTypes);
+
+};
 
 
 #endif //STATIC_FILE_HANDLER_HEAD

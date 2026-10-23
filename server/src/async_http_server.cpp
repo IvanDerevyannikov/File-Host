@@ -15,6 +15,7 @@
 #include "./config/config.h"
 #include "./config/config_provider.h"
 #include "./routes/static_routes.h"
+#include "./routes/api/file_routes.h"
 #include "./server/storage/storage_paths.h"
 
 using boost::asio::ip::tcp;
@@ -76,14 +77,13 @@ int main (int argc, char *argv[])
     const std::string root = config.getValue<std::string>({"storage", "root"});
     StoragePaths paths(root);
     paths.ensureDirectories();
+    const auto path = paths.uploads();
 
     Multiplexer mult;
-    std::string res;
-    // read_async_file_simple(io, res);
     registerStaticRoutes(mult);
+    registerFileApiRoutes(mult);
 
     server::HttpServer server(io,mult,config.getValue<int>({"server", "port"}));
-    std::cout << res.size() << "       RES SIZE HERE:!@!#!$!$!@" <<"\n" << "\n";
     server.run();
     
    return 0;

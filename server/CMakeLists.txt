@@ -28,11 +28,12 @@ file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS
     "src/routes/api/*.h"
     "src/server/storage/*.h"
     "src/services/*.h"
+    "src/dto/*.h"
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_C_COMPILER clang)
+set(CMAKE_C_COMPILER /usr/bin/clang-18)
+set(CMAKE_CXX_COMPILER /usr/bin/clang++-18)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)

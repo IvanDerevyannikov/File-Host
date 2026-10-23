@@ -1,14 +1,17 @@
-#pragma once
+#ifndef HTTP_REQUEST_HEAD1
+#define HTTP_REQUEST_HEAD1
+
 #include <string>
 #include <unordered_map>
 #include <stdexcept>
+
 #include "http_url.h"
 
 namespace http_parser{
     
     class HttpMethod{
-        public:
-        enum Method{
+     public:
+        enum Method {
             GET = 1,
             HEAD = 2,
             POST = 3,
@@ -29,7 +32,7 @@ namespace http_parser{
 
         std::string toString();
         
-        private:
+     private:
         std::string methodStr_;
         HttpMethod::Method method_;
     };
@@ -37,7 +40,7 @@ namespace http_parser{
 
     struct HttpStartString{
 
-        HttpStartString& operator=(const HttpStartString& other){
+        HttpStartString& operator=(const HttpStartString& other) {
             this->method = other.method;
             this->url = other.url;
             this->version = other.version;
@@ -52,7 +55,7 @@ namespace http_parser{
 
     struct HttpRequest{
 
-        HttpRequest& operator=(const HttpRequest& req){
+        HttpRequest& operator=(const HttpRequest& req) {
             this->body= req.body;
             this->headers = req.headers;
             this->startLine = req.startLine;
@@ -65,3 +68,5 @@ namespace http_parser{
     };
 
 }
+
+#endif //HTTP_REQUEST_HEAD1

@@ -1,12 +1,12 @@
 #include "error_handler_manager.h"
+
 #include "../../http_parser/http_request_parser.h"
 
-ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const ErrorHandlerFactory::ErrorHandlerType& errorType){
-
+ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const ErrorHandlerFactory::ErrorHandlerType& errorType) {
     return std::move(errorFactoryPtr_->createErrorHandler(errorType));
 }
 
-ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const std::string& acceptType){
+ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const std::string& acceptType) {
     auto parsedAcceptType = http_parser::parseHeaderValue(acceptType,",");
 
     for(auto type: parsedAcceptType){
@@ -24,7 +24,7 @@ ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const s
     return manageErrorHandler(ErrorHandlerFactory::ErrorHandlerType::DefaultType);
 }
 
-ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const http_parser::HttpRequest& req){
+ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const http_parser::HttpRequest& req) {
     auto parsedAcceptType = http_parser::parseHeaderValue(req.headers.at("Accept"), ",");
     for(auto type: parsedAcceptType){
         if(type.find("image")!=std::string::npos){
@@ -41,22 +41,22 @@ ErrorHandlerManager::errHandlPtr ErrorHandlerManager::manageErrorHandler(const h
     return manageErrorHandler(ErrorHandlerFactory::ErrorHandlerType::DefaultType);
 }
 
- void ErrorHandlerManager::executeError(http_parser::HttpResponse& res, const http_parser::HttpRequest& req, http_parser::response::StatusCode statusCode){
+ void ErrorHandlerManager::executeError(http_parser::HttpResponse& res, const http_parser::HttpRequest& req, http_parser::response::StatusCode statusCode) {
     auto errorHandler = manageErrorHandler(req);
     routeError(res, std::move(errorHandler), statusCode);
  }
 
- void ErrorHandlerManager::executeError(http_parser::HttpResponse& res, const std::string& acceptType, http_parser::response::StatusCode statusCode){
+ void ErrorHandlerManager::executeError(http_parser::HttpResponse& res, const std::string& acceptType, http_parser::response::StatusCode statusCode) {
     auto errorHandler = manageErrorHandler(acceptType);
     routeError(res, std::move(errorHandler), statusCode);
  }
 
- void ErrorHandlerManager::executeError(http_parser::HttpResponse& res, const ErrorHandlerFactory::ErrorHandlerType& errorType, http_parser::response::StatusCode statusCode){
+ void ErrorHandlerManager::executeError(http_parser::HttpResponse& res, const ErrorHandlerFactory::ErrorHandlerType& errorType, http_parser::response::StatusCode statusCode) {
     auto errorHandler = manageErrorHandler(errorType);
     routeError(res, std::move(errorHandler), statusCode);
  }
 
- void ErrorHandlerManager::routeError(http_parser::HttpResponse& res, errHandlPtr errorHandler, http_parser::response::StatusCode statusCode){
+ void ErrorHandlerManager::routeError(http_parser::HttpResponse& res, errHandlPtr errorHandler, http_parser::response::StatusCode statusCode) {
     switch (statusCode){
         case http_parser::response::StatusCode::bad_request:
             errorHandler->handle400Error(res);
